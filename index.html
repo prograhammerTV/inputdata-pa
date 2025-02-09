@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Area</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-database.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyByPWUm...",
+          authDomain: "production-area-db.firebaseapp.com",
+          projectId: "production-area-db",
+          storageBucket: "production-area-db.appspot.com",
+          messagingSenderId: "8390530220",
+          appId: "1:8390530220:web:9ed1f83d4a1434ddc77b09",
+          measurementId: "G-D7QR635XP1"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+      
+        function savePCDetails() {
+          const station = document.getElementById("stationName").value;
+          const pcData = {
+            serialCPU: document.getElementById("serialCPU").value,
+            monitor1: document.getElementById("monitor1").value,
+            monitor2: document.getElementById("monitor2").value,
+            ipAddress: document.getElementById("ipAddress").value,
+            status: document.getElementById("status").value
+          };
+      
+          set(ref(database, `stations/${station}`), pcData)
+            .then(() => alert("PC Details Saved Successfully!"))
+            .catch(error => console.error("Error saving data:", error));
+        }
+      
+        function showPCDetails(station) {
+            const pcRef = ref(database, `stations/${station}`);
+            get(pcRef).then(snapshot => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById("pcDetails").innerHTML = `
+                        <h3>${station} PC Details</h3>
+                        <p><strong>Serial CPU:</strong> ${data.serialCPU}</p>
+                        <p><strong>Monitor 1:</strong> ${data.monitor1}</p>
+                        <p><strong>Monitor 2:</strong> ${data.monitor2}</p>
+                        <p><strong>IP Address:</strong> ${data.ipAddress}</p>
+                        <p><strong>Status:</strong> ${data.status}</p>
+                    `;
+                    document.getElementById("detailsModal").style.display = "block";
+                } else {
+                    alert("No data found for " + station);
+                }
+            }).catch(error => console.error("Error fetching data:", error));
+        }
+      
+        window.savePCDetails = savePCDetails;
+        window.showPCDetails = showPCDetails;
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .station-btn, .save-btn { padding: 10px; margin: 5px; cursor: pointer; background: blue; color: white; border: none; border-radius: 5px; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid black; }
+        .close-btn { cursor: pointer; color: red; }
+        .station-container { display: flex; flex-direction: column; align-items: center; }
+        .tl-container {color: white; padding: 10px; margin-bottom: 10px; }
+        .csr-row { display: flex; justify-content: center; gap: 50px; }
+        .csr-group { display: flex; flex-direction: column; gap: 5px; }
+        .divider { width: 5px; background: black; height: 200px; }
+    </style>
+</head>
+<body>
+    <h1> Production Area</h1>
+    <div class="station-container">
+        <div class="tl-container">
+            <button class="station-btn" style="background-color: green;" onclick="showPCDetails('TL')">Team Leader</button>
+        </div>
+        <div class="csr-row">
+            <div class="csr-group">
+                <button class="station-btn" onclick="showPCDetails('CSR1')">CSR1</button>
+                <button class="station-btn" onclick="showPCDetails('CSR2')">CSR2</button>
+                <button class="station-btn" onclick="showPCDetails('CSR3')">CSR3</button>
+                <button class="station-btn" onclick="showPCDetails('CSR4')">CSR4</button>
+                <button class="station-btn" onclick="showPCDetails('CSR5')">CSR5</button>
+                <button class="station-btn" onclick="showPCDetails('CSR6')">CSR6</button>
+                <button class="station-btn" onclick="showPCDetails('CSR7')">CSR7</button>
+            </div>
+            <div class="divider"></div>
+            <div class="csr-group">
+                <button class="station-btn" onclick="showPCDetails('CSR8')">CSR8</button>
+                <button class="station-btn" onclick="showPCDetails('CSR9')">CSR9</button>
+                <button class="station-btn" onclick="showPCDetails('CSR10')">CSR10</button>
+                <button class="station-btn" onclick="showPCDetails('CSR11')">CSR11</button>
+                <button class="station-btn" onclick="showPCDetails('CSR12')">CSR12</button>
+                <button class="station-btn" onclick="showPCDetails('CSR13')">CSR13</button>
+                <button class="station-btn" onclick="showPCDetails('CSR14')">CSR14</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="detailsModal" class="modal">
+        <span class="close-btn" onclick="document.getElementById('detailsModal').style.display='none'">&times;</span>
+        <div id="pcDetails"></div>
+    </div>
+</body>
+</html>
